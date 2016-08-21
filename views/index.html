@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+		<div class='well'>
+			<form method='POST' action='/departments'>
+				<div class='form-group'>
+					<input class='form-control' name='departmentName' placeholder='Create a New Department' />
+				</div>
+					<button type='submit' class='btn btn-primary'>Create Department </button>
+			</form>
+		</div> <! -- end well div -->	
+{% endblock %}

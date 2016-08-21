@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<link rel='stylesheet' href='/bootstrap/dist/css/bootstrap.css' />
+	</head>
+	<body>
+		<div class='container'>
+			<h1> Acme Users - Home </h1>
+			<h6> <a href='https://github.com/patspeiser/acme-users' target='blank'> by Pat Speiser </a> </h6>
+			
+		
+			<div role='navigation' class='container'>
+				<ul class='nav nav-tabs'>
+					<!-- home -->
+					<li> 
+						<a href='/'> Home </a> 
+					</li>
+					<!-- default department -->
+					{% if defaultDepartment %}
+					<li>
+						{{departments}}
+						<a href='/departments/{{defaultDepartment.id}}'> Departments({{ defaultDepartment.name }}) </a>
+					</li>
+					{% endif %}
+					<!-- customers -->
+						<li>
+							<a href='/customers'> Customers </a>
+						</li>
+				</ul>
+			</div>	<! -- ends nav area -->	
+
+			<div>
+				{% block content %}
+				{% endblock %}
+			</div>	
+		</div>
+	</body>
+
+</html>
+

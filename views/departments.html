@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{{ departmentData | json }} 
+    <div class='well'>
+      <form method='POST' action='/departments/{{departmentData.id}}/employees'>
+        <div class='form-group'>
+          <input class='form-control' name='employeeName' placeholder='Create a New Employee' />
+        </div>
+          <button type='submit' class='btn btn-primary'>Create Employee </button>
+      </form>
+	</div> <! -- end well div -->
+{% endblock %}

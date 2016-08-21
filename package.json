@@ -1,0 +1,30 @@
+{
+  "name": "acme-users",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo Dont forget to add tests",
+    "start": "PORT=3000 CONN=postgres://localhost/acme_users nodemon -e js,html server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patspeiser/acme-users.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patspeiser/acme-users/issues"
+  },
+  "homepage": "https://github.com/patspeiser/acme-users#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.7",
+    "express": "^4.14.0",
+    "method-override": "^2.3.6",
+    "nodemon": "^1.10.2",
+    "pg": "^6.1.0",
+    "sequelize": "^3.24.1",
+    "swig": "^1.4.2"
+  }
+}
