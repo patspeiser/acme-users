@@ -10,4 +10,45 @@
           <button type='submit' class='btn btn-primary'>Create Employee </button>
       </form>
 	</div> <! -- end well div -->
+	
+	{% if departmentData.isDefault == true %}
+		<div>
+			<span>This is the default department. </span>
+		</div>
+	{% endif %}
+
+	{% if departmentData.isDefault == false %}
+	<div> 
+		<form method='POST' action='/departments/{{departmentData.id}}?_method=PUT'>
+			<button type='submit' class='btn btn-warning'> Set {{departmentData.name}} as Default Department </button>
+		</form>
+	</div> <!-- end change default area -->
+	{% endif %}
+
+	{% if departmentData.users.length > 0 %}
+		<div>
+			<table class='table table-striped'>
+				<thead> <h4> Employees </h4></thead>
+					<tbody>
+					{% for employee in departmentData.users %}
+						<tr> 
+							<td> 
+								{{employee.name}}
+							</td> <!-- employee name -->
+		
+							<td> 
+								<button type='submit' action='' class='btn btn-info'> Make Customer </button> 
+							</td> <!-- make customer button --> 
+							
+							<td> 
+								<form method='POST' action='/departments/{{departmentData.id}}/employees/{{employee.id}}?_method=DELETE'>
+									<button type='submit' class='btn btn-danger'> Delete Employee </button> 
+								</form>
+							</td> <!-- delete button -->
+						</tr>
+					{% endfor %}
+					</tbody>
+			</table>
+		</div> <!-- end employee list -->
+	{% endif %}
 {% endblock %}

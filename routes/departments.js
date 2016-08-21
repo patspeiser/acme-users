@@ -5,6 +5,7 @@ var Users = dataModels.Users;
 
 module.exports = router;
 
+// display the department with that :departmentId, incude employees in that directory
 router.get('/:departmentId', function(req, res, next){
 	Departments.findOne({ 
 			where: { 
@@ -21,6 +22,7 @@ router.get('/:departmentId', function(req, res, next){
 		.catch(next);
 });
 
+//when departments are created check if default. if not set that one as default. redirect back to departments:/:departmentId either way
 router.post('/', function(req, res, next){
 	Departments.getDefault()
 	.then(function(defaultDepartment){
@@ -39,10 +41,47 @@ router.post('/', function(req, res, next){
 	.catch(next)
 });
 
+//add employees to department
 router.post('/:departmentId/employees', function(req, res, next){
 	Users.findOrCreate({ where: { name: req.body.employeeName, departmentId: req.params.departmentId } })
 	.then(function(user){
-		console.log(user)
 		res.redirect('/departments/' + user[0].departmentId);
+	})
+});
+
+//delete employee from department
+router.delete('/:departmentId/employees/:employeeId', function(req, res, next){
+	Users.destroy({
+		where: {
+			id: req.params.employeeId
+		}	
+	})
+	.then( function(){
+		res.redirect('back');
+	})
+})
+
+//make existing department the default department
+router.put('/:departmentId', function(req, res, next){
+	Departments.findOne({ where: { isDefault: true } })
+	.then(function(defaultDepartment){
+		Departments.update({
+			isDefault: false
+		},{
+			where: { 
+				isDefault: true 
+			}
+		})
+	})
+	.then(function(){
+		Departments.update({
+			isDefault: true
+			}, {
+				where: {
+					id: req.params.departmentId
+				}	
+			})
+	}).then( function(){
+		res.redirect('/departments/' + req.params.departmentId);
 	})
 })
