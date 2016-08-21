@@ -7,16 +7,16 @@ module.exports = router;
 
 // display the department with that :departmentId, incude employees in that directory
 router.get('/:departmentId', function(req, res, next){
-	Departments.findOne({ 
-			where: { 
-				id: req.params.departmentId 
-			},
-			include: [{ model: Users }]
+	Departments.findAll({
+			incude: [{model: Users }] 
 		})
 		.then(function(departmentData){
 			Departments.getDefault()
 			.then(function(defaultDepartment){
-				res.render('departments', { departmentData: departmentData, defaultDepartment: defaultDepartment })
+				res.render('departments', { 
+					departmentData: departmentData, 
+					defaultDepartment: defaultDepartment, 
+					thisDepartment: req.params.departmentId })
 			})
 		})
 		.catch(next);

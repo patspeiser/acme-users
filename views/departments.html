@@ -3,7 +3,7 @@
 {% block content %}
 {{ departmentData | json }} 
     <div class='well'>
-      <form method='POST' action='/departments/{{departmentData.id}}/employees'>
+      <form method='POST' action='/departments/{{ thisDepartment }}/employees'>
         <div class='form-group'>
           <input class='form-control' name='employeeName' placeholder='Create a New Employee' />
         </div>
@@ -11,19 +11,28 @@
       </form>
 	</div> <! -- end well div -->
 	
-	{% if departmentData.isDefault == true %}
+	{% if defaultDepartment.id == thisDepartment %}
 		<div>
 			<span>This is the default department. </span>
 		</div>
 	{% endif %}
 
-	{% if departmentData.isDefault == false %}
+	{% if defaultDepartment.id != thisDepartment %}
 	<div> 
-		<form method='POST' action='/departments/{{departmentData.id}}?_method=PUT'>
-			<button type='submit' class='btn btn-warning'> Set {{departmentData.name}} as Default Department </button>
+		<form method='POST' action='/departments/{{thisDepartment}}?_method=PUT'>
+			<button type='submit' class='btn btn-warning'> Make this the  Default Department </button>
 		</form>
 	</div> <!-- end change default area -->
 	{% endif %}
+	
+	<nav>
+		<ul class='nav nav-pills'>
+			{% for department in departmentData %}
+				<li role='presentation' {% if thisDepartment == department.id %} class='active' {% endif %}> <a href='/departments/{{department.id}}'> {{department.name}} </a> </li>
+			{% endfor %}
+		</ul>
+	</nav>
+	
 
 	{% if departmentData.users.length > 0 %}
 		<div>
