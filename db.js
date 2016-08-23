@@ -9,12 +9,6 @@ var Departments = db.define('departments', {
 		type: Sequelize.BOOLEAN,
 	}
 }, {
-	hooks: {
-	},
-	getterMethods: {
-	},
-	setterMethods: {
-	},
 	classMethods: {
 		getDefault: function(name){
 			return Departments.findOne({ where: { isDefault: true } })
@@ -23,7 +17,6 @@ var Departments = db.define('departments', {
 	instanceMethods:{
 	}
 })
-
 
 var Users = db.define('users', {
 	name: { 
@@ -43,7 +36,7 @@ var Users = db.define('users', {
 	}
 }) 
 
-Users.belongsTo(Departments);
+//Users.belongsTo(Departments);
 Departments.hasMany(Users);
 
 module.exports = {

@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-{{ departmentData | json }} 
     <div class='well'>
       <form method='POST' action='/departments/{{ thisDepartment }}/employees'>
         <div class='form-group'>
@@ -12,7 +11,7 @@
 	</div> <! -- end well div -->
 	
 	{% if defaultDepartment.id == thisDepartment %}
-		<div>
+		<div class='well'>
 			<span>This is the default department. </span>
 		</div>
 	{% endif %}
@@ -32,32 +31,38 @@
 			{% endfor %}
 		</ul>
 	</nav>
-	
 
-	{% if departmentData.users.length > 0 %}
-		<div>
-			<table class='table table-striped'>
-				<thead> <h4> Employees </h4></thead>
-					<tbody>
-					{% for employee in departmentData.users %}
-						<tr> 
-							<td> 
-								{{employee.name}}
-							</td> <!-- employee name -->
+
+
 		
-							<td> 
-								<button type='submit' action='' class='btn btn-info'> Make Customer </button> 
-							</td> <!-- make customer button --> 
-							
-							<td> 
-								<form method='POST' action='/departments/{{departmentData.id}}/employees/{{employee.id}}?_method=DELETE'>
-									<button type='submit' class='btn btn-danger'> Delete Employee </button> 
-								</form>
-							</td> <!-- delete button -->
-						</tr>
-					{% endfor %}
-					</tbody>
-			</table>
-		</div> <!-- end employee list -->
-	{% endif %}
+		{% for department in departmentData%}
+  		{% if department.id == thisDepartment %}		
+				<div>
+					<table class='table table-striped'>
+						<thead> <h4> Employees </h4></thead>
+							<tbody>
+							{% for employee in department.users %}
+								<tr> 
+									<td> 
+										{{employee.name}}
+									</td> <!-- employee name -->
+									
+									<td> 
+										<button type='submit' action='' class='btn btn-info'> Make Customer </button> 
+									</td> <!-- make customer button --> 
+									
+									<td> 
+										<form method='POST' action='/departments/{{thisDepartment}}/employees/{{employee.id}}?_method=DELETE'>
+											<button type='submit' class='btn btn-danger'> Delete Employee </button> 
+										</form>
+									</td> <!-- delete button -->
+								
+								</tr>
+							{% endfor %}
+							</tbody>
+					</table>
+				</div> <!-- end employee list -->
+			{% endif %}
+		{% endfor %}
+
 {% endblock %}
