@@ -1,88 +1,76 @@
 var router = require('express').Router();
 var dataModels = require('../db');
+var Promise = require('bluebird');
 var Departments = dataModels.Departments;
 var Users = dataModels.Users;
 
 module.exports = router;
 
 // display the department with that :departmentId, incude employees in that directory
-router.get('/:departmentId', function(req, res, next){
-	Departments.findAll({
-			include: [{model: Users}] 
-		})
-		.then(function(departmentData){
-			console.log(departmentData);
-			Departments.getDefault()
-			.then(function(defaultDepartment){
-				res.render('departments', { 
-					departmentData: departmentData, 
-					defaultDepartment: defaultDepartment, 
-					thisDepartment: req.params.departmentId })
-			})
-		})
-		.catch(next);
+router.get('/:id', function(req, res, next){
+  //do you need to find ALL departments with ALL Employees.. can't you just get the department with the passed in id, and include it's employees?
+  Promise.all([
+    Departments.findAll({
+        include: [{model: Users}] 
+    }),
+    Departments.getDefault()
+  ])
+  .spread(function(departments, defaultDepartment){
+      res.render('departments', { 
+        departmentData: departments, 
+        defaultDepartment: defaultDepartment, 
+        thisDepartment: req.params.id });
+  })
+  .catch(next);
 });
 
 //when departments are created check if default. if not set that one as default. redirect back to departments:/:departmentId either way
 router.post('/', function(req, res, next){
-	Departments.getDefault()
-	.then(function(defaultDepartment){
-		if (!defaultDepartment){
-			Departments.findOrCreate({ where: { name: req.body.departmentName, isDefault: true } })
-			.then(function(department){
-				res.redirect('/departments/' + department[0].id);
-			})
-		} else {
-			Departments.findOrCreate({ where: { name: req.body.departmentName, isDefault: false } })
-			.then(function(department){
-				res.redirect('/departments/' + department[0].id);
-			})
-		}
-	})
-	.catch(next)
+  Departments.create({
+    name: req.body.name
+  })
+  .then(function(department){
+    res.redirect('/departments/' + department.id);
+  })
+	.catch(next);
 });
 
 //add employees to department
-router.post('/:departmentId/employees', function(req, res, next){
-	Users.findOrCreate({ where: { name: req.body.employeeName, departmentId: req.params.departmentId } })
+router.post('/:id/employees', function(req, res, next){
+	Users.create({ name: req.body.employeeName, departmentId: req.params.id })
 	.then(function(user){
-		res.redirect('/departments/' + user[0].departmentId);
-	})
+		res.redirect('/departments/' + user.departmentId);
+	});
 });
 
 //delete employee from department
-router.delete('/:departmentId/employees/:employeeId', function(req, res, next){
+router.delete('/:departmentId/employees/:id', function(req, res, next){
 	Users.destroy({
 		where: {
-			id: req.params.employeeId
+			id: req.params.id
 		}	
 	})
 	.then( function(){
-		res.redirect('back');
-	})
-})
+		res.redirect('/departments/' + req.params.departmentId);
+	});
+});
 
 //make existing department the default department
-router.put('/:departmentId', function(req, res, next){
-	Departments.findOne({ where: { isDefault: true } })
-	.then(function(defaultDepartment){
-		Departments.update({
-			isDefault: false
-		},{
-			where: { 
-				isDefault: true 
-			}
-		})
-	})
-	.then(function(){
-		Departments.update({
-			isDefault: true
-			}, {
-				where: {
-					id: req.params.departmentId
-				}	
-			})
-	}).then( function(){
-		res.redirect('/departments/' + req.params.departmentId);
-	})
-})
+router.put('/:id', function(req, res, next){
+  Departments.getDefault()
+    .then(function(department){
+      department.isDefault = false;
+      return department.save();
+    })
+    .then(function(){
+      return Departments.findById(req.params.id);
+    })
+    .then(function(department){
+      department.isDefault = true;
+      return department.save();
+    })
+	  .then( function(department){
+		  res.redirect('/departments/' + req.params.id);
+	  })
+    .catch(next);
+});
